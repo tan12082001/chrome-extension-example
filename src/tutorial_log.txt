@@ -1,0 +1,174 @@
+Steps to Create an Chrome Extension with React Application.
+
+// Tutorial Link: https://medium.com/@tharshita13/creating-a-chrome-extension-with-react-a-step-by-step-guide-47fe9bab24a1
+
+    - update the app component to display the required content, here simply `hello world`.
+    - Install the dependencies including webpack (exists in the package but still installed the library following the tutorial).
+        * npm install --save-dev webpack webpack-cli copy-webpack-plugin css-loader ts-loader html-webpack-plugin ts-node
+    - create webpack.config.js file as default react app doesnt provide the config file for webpack.
+    - Update the config file with the below code:
+
+
+const path = require("path");
+const HTMLPlugin = require("html-webpack-plugin");
+const CopyPlugin = require("copy-webpack-plugin")
+
+module.exports = {
+    entry: {
+        index: "./src/index.js"
+    },
+    mode: "production",
+    module: {
+        rules: [
+            {
+              test: /\.js?$/,
+               use: [
+                 {
+                  loader: "ts-loader",
+                   options: {
+                     compilerOptions: { noEmit: false },
+                    }
+                  }],
+               exclude: /node_modules/,
+            },
+            {
+              exclude: /node_modules/,
+              test: /\.css$/i,
+               use: [
+                  "style-loader",
+                  "css-loader"
+               ]
+            },
+        ],
+    },
+    plugins: [
+        new CopyPlugin({
+            patterns: [
+                { from: "manifest.json", to: "../manifest.json" },
+            ],
+        }),
+        ...getHtmlPlugins(["index"]),
+    ],
+    resolve: {
+        extensions: [".tsx", ".ts", ".js"],
+    },
+    output: {
+        path: path.join(__dirname, "dist/js"),
+        filename: "[name].js",
+    },
+};
+
+function getHtmlPlugins(chunks) {
+    return chunks.map(
+        (chunk) =>
+            new HTMLPlugin({
+                title: "React extension",
+                filename: `${chunk}.html`,
+                chunks: [chunk],
+            })
+    );
+}
+
+    - After this update the package.json file with 
+        * "scripts": {
+                "build": "webpack --config webpack.config.js",
+                "watch": "webpack -w --config webpack.config.js"
+            }
+    - Create an manifest.json file to the root directory
+
+        * {
+                "version": "1.0.0",
+                "manifest_version": 3,
+                "name": "React Chrome Extension",
+                "description": "This is a Chrome extension built with React and TypeScript",
+                "action": {
+                    "default_popup": "js/index.html",
+                    "default_title": "React Chrome Extension"
+                }
+            }
+    - run the npm run build command.
+    - install babel loader for handling .js files
+        * npm install --save-dev babel-loader @babel/core @babel/preset-env @babel/preset-react
+    - create and update the .babelrc
+        * {
+            "presets": [
+                "@babel/preset-env",
+                "@babel/preset-react"
+            ]
+            }
+    
+    - update the webpack.config file
+
+const path = require("path");
+const HTMLPlugin = require("html-webpack-plugin");
+const CopyPlugin = require("copy-webpack-plugin");
+
+module.exports = {
+    entry: {
+        index: "./src/index.js"
+    },
+    mode: "production",
+    module: {
+        rules: [
+            {
+              test: /\.tsx?$/,
+               use: [
+                 {
+                  loader: "ts-loader",
+                   options: {
+                     compilerOptions: { noEmit: false },
+                    }
+                  }],
+               exclude: /node_modules/,
+            },
+            {
+              test: /\.js$/, // Add this rule for JavaScript files
+              exclude: /node_modules/,
+              use: {
+                loader: 'babel-loader'
+              }
+            },
+            {
+              exclude: /node_modules/,
+              test: /\.css$/i,
+               use: [
+                  "style-loader",
+                  "css-loader"
+               ]
+            },
+        ],
+    },
+    plugins: [
+        new CopyPlugin({
+            patterns: [
+                { from: "manifest.json", to: "../manifest.json" },
+            ],
+        }),
+        ...getHtmlPlugins(["index"]),
+    ],
+    resolve: {
+        extensions: [".tsx", ".ts", ".js"],
+    },
+    output: {
+        path: path.join(__dirname, "dist/js"),
+        filename: "[name].js",
+    },
+};
+
+function getHtmlPlugins(chunks) {
+    return chunks.map(
+        (chunk) =>
+            new HTMLPlugin({
+                title: "React extension",
+                filename: `${chunk}.html`,
+                chunks: [chunk],
+            })
+    );
+}
+
+    - after running the npm run build, it creates a dist folder.
+    - to load the extension
+        open chrome://extensions
+        on the developer mode 
+        select load unpacked
+        after, you will be able to see the extension in the list.

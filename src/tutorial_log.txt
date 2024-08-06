@@ -172,3 +172,28 @@ function getHtmlPlugins(chunks) {
         on the developer mode 
         select load unpacked
         after, you will be able to see the extension in the list.
+
+
+LOAD UNPACKED:
+    - basically an unpacked extension which means the extension is in its development form consisting of individual files and folders rather than packed in a single `.crx` file.
+        * `.crx` file is the file format used by google chrome for packaging and distributing chrome extensions.
+        it is essentially a compressed archive containing all the files necessary for a chrome extension to run, including HTML, CSS, JavaScript, images and the `manifest.json` file.
+    - In .crx file there are key points
+        * packaging: when you pack an extension using the chrome browser, it generates a `.crx` file along with a private key file. this private key is used to sign the extension and ensure its authenticity.
+        * distribution: the `.crx` file is what you upload to the chrome web store when you want to distribute your extension. users can then download and install the extension directly from the store.
+        * security: by signing the `.crx` file with a private key, chrome ensures that the extension has not been tampered with. this provides a layer of security and trust for users.
+    - creating a .crx file
+        * ensure all extension files are in the correct format and structure including the `manifest.json` file.
+        * navigate to `chrome://extensions/`
+        * open the developer mode and click on pack extension
+        * in the extension root directory field select the folder containing your extension files. and click on the pack extension,
+        * then chrome will create a .crx file and private key file. the crx file is the one that is used fpr distribution.
+    - in the vs code project for the react application you need to select the dist folder after ruuning the build command then it generates the .crx file.
+* the load unpacked helps in testing and debugging the extension unlike with .crx file.
+
+MANIFEST FILE:
+    * ensures you have a properly configured `manifest.json` file in the project root. this file tells chrome about your extension, such as its name, version, permissions and entry points.
+
+- Load unpacked feature in chrome to test the extension locally.
+- once the extension is ready to deploy your extension, you need to pack it into a `.crx` file.
+- we can publish the extension in chrome web store by creating a developer account on the chrome web store developer dashboard.
